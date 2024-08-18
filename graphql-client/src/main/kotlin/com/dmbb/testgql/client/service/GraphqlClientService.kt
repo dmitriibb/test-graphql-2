@@ -23,8 +23,9 @@ class GraphqlClientService(
         println("queryBookSync = ${queryBookSync("book-1")}")
         println("queryBookSync = ${queryBookSync("book-id-dont-exist")}")
 //        queryBookByIdReact("book-3")
-        queryAuthorsGeneratedSubs()
-//        queryAuthorsGeneratedFlux()
+        queryAuthorsGeneratedSubsWebclient()
+        queryAuthorsGeneratedSubsWebSocket()
+        queryAuthorsGeneratedFlux()
     }
 
     fun queryBookSync(bookId: String): Book? {
@@ -87,8 +88,8 @@ class GraphqlClientService(
         }
     }
 
-    private fun queryAuthorsGeneratedSubs() {
-        graphQlClientWebSocket.documentName("queryAuthorsGeneratedSubs")
+    private fun queryAuthorsGeneratedSubsWebclient() {
+        graphqlClientReact.documentName("queryAuthorsGeneratedSubs")
 //            .retrieveSubscription("authorsGeneratedSubs")
 //            .toEntity(Author::class.java)
 //            .subscribe {
@@ -97,14 +98,24 @@ class GraphqlClientService(
             .executeSubscription()
             .subscribe { response ->
                 if (response.errors.isNotEmpty()) {
-                    println("queryAuthorsGeneratedSubs errors = ${response.errors}")
+                    println("queryAuthorsGeneratedSubsWebclient errors = ${response.errors}")
                 } else {
                     val field = response.field("authorsGeneratedSubs").toEntity(Author::class.java)
-                    println("queryAuthorsGeneratedSubs = $field")
+                    println("queryAuthorsGeneratedSubsWebclient = $field")
                 }
             }
     }
 
+    private fun queryAuthorsGeneratedSubsWebSocket() {
+        graphQlClientWebSocket.documentName("queryAuthorsGeneratedSubs")
+            .retrieveSubscription("authorsGeneratedSubs")
+            .toEntity(Author::class.java)
+            .subscribe {
+                println("queryAuthorsGeneratedSubsWebSocket = $it")
+            }
+    }
+
+    // uses requestNapping, therefore not reactive
     private fun queryAuthorsGeneratedFlux() {
         graphQlClientWebSocket.documentName("queryAuthorsGeneratedFlux")
 //            .executeSubscription().map { response ->
