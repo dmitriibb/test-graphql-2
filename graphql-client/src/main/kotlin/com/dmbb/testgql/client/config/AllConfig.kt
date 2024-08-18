@@ -2,24 +2,38 @@ package com.dmbb.testgql.client.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.graphql.client.HttpSyncGraphQlClient
+import org.springframework.graphql.client.*
 import org.springframework.web.client.RestClient
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.socket.client.StandardWebSocketClient
+import org.springframework.web.reactive.socket.client.WebSocketClient
 
 @Configuration
 class AllConfig {
+
+    private val baseUrlHttp = "http://localhost:8080/graphql"
+    private val baseUrlWs = "ws://localhost:8080/graphql"
 
     @Bean
     fun defaultClient(): RestClient = RestClient.create()
 
     @Bean
-    fun graphQlClient(restClient: RestClient): HttpSyncGraphQlClient = HttpSyncGraphQlClient.create(restClient)
+    fun graphQlClientSync(restClient: RestClient): HttpSyncGraphQlClient = HttpSyncGraphQlClient.create(restClient)
         .mutate()
-        .url("http://localhost:8080/graphql")
+        .url(baseUrlHttp)
         .build()
 
     @Bean
-    fun webClient(): WebClient = WebClient.create("http://localhost:8080/graphql")
+    fun webClient(): WebClient = WebClient.create(baseUrlHttp)
+
+    @Bean
+    fun graphqlClient(webClient: WebClient) = HttpGraphQlClient.create(webClient)
+
+    @Bean
+    fun webSocketClient(): WebSocketClient = StandardWebSocketClient()
+
+    @Bean
+    fun graphqlClientWebSocket(webSocketClient: WebSocketClient) = WebSocketGraphQlClient.builder(baseUrlWs, webSocketClient).build()
 
 
 //    @Bean

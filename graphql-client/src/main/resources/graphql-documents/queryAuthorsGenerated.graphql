@@ -1,0 +1,7 @@
+query AuthorsGenerated {
+    authorsGenerated {
+        id
+        firstName
+        lastName
+    }
+}

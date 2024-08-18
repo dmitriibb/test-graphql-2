@@ -1,0 +1,7 @@
+subscription AuthorsGeneratedSubs {
+    authorsGeneratedSubs {
+        id
+        firstName
+        lastName
+    }
+}

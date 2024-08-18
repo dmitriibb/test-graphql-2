@@ -1,0 +1,10 @@
+query BookByIdReactive($bookId: ID!) {
+    bookByIdReactive(id: $bookId) {
+        id
+        name
+        author {
+            id
+            firstName
+        }
+    }
+}

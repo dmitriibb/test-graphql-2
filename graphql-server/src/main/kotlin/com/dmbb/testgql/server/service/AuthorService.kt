@@ -1,10 +1,14 @@
 package com.dmbb.testgql.server.service
 
 import com.dmbb.testgql.server.model.Author
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
+import java.lang.Thread.sleep
 
 @Service
 class AuthorService {
@@ -17,15 +21,18 @@ class AuthorService {
 
     fun getById(id: String): Author? = authors.find { it.id == id }
 
-    fun generateAuthors() : Flow<Author> {
-        return flow {
-            repeat(100) { i ->
+    fun generateAuthors(limit: Int) : Flux<Author> {
+        return Flux.create { emitter ->
+            repeat(limit) { i ->
                 authors.random()
                     .copy(id = "author-$i")
-                    .also { println("produce $it") }
-                    .let { emit(it) }
-                delay(500)
+                    .also {
+                        println("produce $it")
+                        emitter.next(it)
+                    }
+                sleep(500)
             }
+            emitter.complete()
         }
     }
 

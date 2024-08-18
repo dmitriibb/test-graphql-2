@@ -1,6 +1,14 @@
 type Query {
     bookById(id: ID): Book
+    bookByIdReactive(id: ID): Book
+    authorsGenerated: [Author]
+    authorsGeneratedFlux: [Author]
 }
+
+type Subscription {
+    authorsGeneratedSubs: Author
+}
+
 
 type Book {
     id: ID
